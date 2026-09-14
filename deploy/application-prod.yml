@@ -1,0 +1,52 @@
+# 生产环境配置（-Dspring.profiles.active=prod 时启用）
+# 数据库密码通过环境变量 AGRI_DB_PASSWORD 注入（由 systemd EnvironmentFile 提供）
+server:
+  port: 8080
+
+spring:
+  application:
+    name: agri-platform
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/agri_platform?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: ${AGRI_DB_PASSWORD}
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password:
+      database: 0
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: com.rural.agri.entity
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    banner: false
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+jwt:
+  # 必须由环境变量注入，不留默认值：缺失时启动即报错，避免线上用固定密钥签发 token
+  secret: ${AGRI_JWT_SECRET}
+  expire-hours: 24
+
+file:
+  upload-dir: /opt/agri/upload
+
+logging:
+  level:
+    com.rural.agri: info
+  file:
+    name: /opt/agri/logs/agri.log
+    max-size: 50MB
+    max-history: 7

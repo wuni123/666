@@ -1,0 +1,17 @@
+[Unit]
+Description=Agri Platform Backend (Spring Boot)
+After=network.target mysql.service redis-server.service
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/agri
+EnvironmentFile=/opt/agri/.env
+ExecStart=/usr/bin/java -jar /opt/agri/app.jar --spring.profiles.active=prod
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=agri
+
+[Install]
+WantedBy=multi-user.target

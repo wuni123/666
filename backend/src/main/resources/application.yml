@@ -1,0 +1,51 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: agri-platform
+  # 不显式指定 profile 时激活 local，从 application-local.yml（已 gitignore）读取本地敏感配置。
+  # 线上由 systemd 传 --spring.profiles.active=prod 覆盖，见 deploy/agri.service。
+  profiles:
+    default: local
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/agri_platform?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    # 数据库账号密码不写死在代码库，通过环境变量或 application-local.yml 注入
+    username: ${AGRI_DB_USER:root}
+    password: ${AGRI_DB_PASSWORD:}
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password:
+      database: 0
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: com.rural.agri.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+jwt:
+  # 生产环境必须通过 AGRI_JWT_SECRET 注入随机密钥（见 application-prod.yml），此处仅为本地开发默认值
+  secret: ${AGRI_JWT_SECRET:dev-only-insecure-secret-do-not-use-in-production}
+  expire-hours: 24
+
+file:
+  upload-dir: upload
+
+logging:
+  level:
+    com.rural.agri: debug

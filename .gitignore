@@ -1,0 +1,22 @@
+/交付方案.md
+/实施工程师面试.md
+/简历-实施工程师项目描述.md
+/面试.md
+
+# 本地私有配置，含数据库口令，切勿提交
+application-local.yml
+
+# 运行期上传的图片；covers/ 是演示用种子素材，需保留
+backend/upload/*
+!backend/upload/covers/
+
+# 构建产物（由 mvn / deploy/build.sh 生成，不入库；服务器上跑 build.sh 重新生成即可）
+target/
+dist/
+*.tar.gz
+deploy/package/
+deploy/update/app.jar
+deploy/update/dist/
+
+# Claude Code 本地配置
+.claude/
